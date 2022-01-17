@@ -1626,22 +1626,23 @@ bool TryAddOpenings_Poly2Tri(const std::vector<TempOpening>& openings,const std:
         }
 
 
-        // Build the poly2tri inner contours for all holes we got from ClipperLib
-        for(ClipperLib::Polygon& opening : clip.holes) {
-
-            contours.push_back(std::vector<p2t::Point*>());
-            std::vector<p2t::Point*>& contour = contours.back();
-
-            for(ClipperLib::IntPoint& point : opening) {
-                contour.push_back( new p2t::Point(from_int64(point.X), from_int64(point.Y)) );
-            }
-
-            cdt->AddHole(contour);
-        }
+        
 
         try {
+            // Build the poly2tri inner contours for all holes we got from ClipperLib
+            for (ClipperLib::Polygon &opening : clip.holes) {
+
+                contours.push_back(std::vector<p2t::Point *>());
+                std::vector<p2t::Point *> &contour = contours.back();
+
+                for (ClipperLib::IntPoint &point : opening) {
+                    contour.push_back(new p2t::Point(from_int64(point.X), from_int64(point.Y)));
+                }
+
+                cdt->AddHole(contour);
+            }
             // Note: See above
-            cdt->Triangulate();
+            //cdt->Triangulate();
         }
         catch(const std::exception& e) {
             IFCImporter::LogError("Ifc: error during polygon triangulation, skipping some openings: (poly2tri: "
